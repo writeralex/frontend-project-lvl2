@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/writeralex/frontend-project-lvl2#readme",
   "dependencies": {
-    "commander": "^9.4.0"
+    "@hexlet/immutable-fs-trees": "^0.7.1",
+    "commander": "^9.4.0",
+    "lodash": "^4.17.21"
   }
 }
