@@ -4,8 +4,8 @@ import path from 'path';
 
 export const engineDiff = (filepath1, filepath2) => {
 
-  const file1 = JSON.parse(fs.readFileSync(`./${filepath1}`, 'utf-8'));
-  const file2 = JSON.parse(fs.readFileSync(`./${filepath2}`, 'utf-8'));
+  const file1 = JSON.parse(fs.readFileSync(`./src/${filepath1}`, 'utf-8'));
+  const file2 = JSON.parse(fs.readFileSync(`./src/${filepath2}`, 'utf-8'));
 
   const keysOfFile1 = Object.keys(file1);
   const keysOfFile2 = Object.keys(file2);
