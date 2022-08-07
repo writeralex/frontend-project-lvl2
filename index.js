@@ -1,23 +1,26 @@
-import fs from 'fs';
 import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
 
-  const file1 = JSON.parse(fs.readFileSync('./src/file1.json', 'utf-8'));
-  const file2 = JSON.parse(fs.readFileSync('./src/file2.json', 'utf-8'))
-  
+export const engineDiff = (filepath1, filepath2) => {
+
+  const file1 = JSON.parse(fs.readFileSync(`./${filepath1}`, 'utf-8'));
+  const file2 = JSON.parse(fs.readFileSync(`./${filepath2}`, 'utf-8'));
+
   const keysOfFile1 = Object.keys(file1);
   const keysOfFile2 = Object.keys(file2);
 
-  const unionFiles = _.union(keysOfFile1, keysOfFile2).sort();
+  const unionFiles = _.sortBy(_.union(keysOfFile1, keysOfFile2));
 
   const diff = unionFiles.map((key) => {
-    if (!_.has(file1, key)) {
+    if (!Object.hasOwn(file1, key)) {
       return {
         key: key,
         type: 'added',
         value: file2[key],
       }
     }
-    if (!_.has(file2, key)) {
+    if (!Object.hasOwn(file2, key)) {
       return {
         key: key,
         type: 'removed',
@@ -40,20 +43,25 @@ import _ from 'lodash';
       }
     }
   });
-
-  const genDiff = diff.map((key) => {
-    switch(key.type) {
+  const symbols = {
+    unchanged: '   ',
+    changed: ' - ',
+    added: ' + ',
+  }
+  const genDiff = diff.map((node) => {
+    const { key, type, value, oldValue } = node;
+    switch(type) {
       case 'unchanged':
-        return `  ${key.key}: ${key.value}`;
+        return `${symbols.unchanged}${key}: ${value}`;
       case 'changed':
-        return `- ${key.key}: ${key.oldValue}\n+ ${key.key}: ${key.value}`;
+        return `${symbols.added}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
       case 'added':
-        return `+ ${key.key}: ${key.value}`;
+        return `${symbols.added}${key}: ${value}`;
       case 'removed':
-        return `- ${key.key}: ${key.oldValue}`;
+        return `${symbols.changed}${key}: ${oldValue}`;
     }
   })
   console.log(`{\n${genDiff.join('\n')}\n}`);
-
+}
   
 
