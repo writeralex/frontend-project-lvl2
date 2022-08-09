@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import fs from 'fs';
-import path from 'path';
 
 export const engineDiff = (filepath1, filepath2) => {
 
