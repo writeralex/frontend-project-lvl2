@@ -3,10 +3,10 @@ import yaml from 'js-yaml';
 import path from 'path';
 
 const parser = (filepath) => {
-    if ((path.extname(filepath)) === ('.yml' || '.yaml')) {
+    if (filepath.includes('ml')) {
         return yaml.load(fs.readFileSync(`./__fixtures__/${filepath}`, 'utf-8'));
       }
-    if ((path.extname(filepath)) === ('.js' || '.json')) {
+    if (filepath.includes('js')) {
         return JSON.parse(fs.readFileSync(`./__fixtures__/${filepath}`, 'utf-8'));
     }
 }
