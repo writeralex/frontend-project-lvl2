@@ -1,6 +1,5 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import path from 'path';
 
 const parser = (filepath) => {
     if (filepath.includes('ml')) {
