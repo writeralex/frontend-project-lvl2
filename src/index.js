@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import parser from './parser.js';
+import parser from 'parser.js';
 
 export const engineDiff = (filepath1, filepath2) => {
   const file1 = parser(filepath1);
@@ -9,8 +9,36 @@ export const engineDiff = (filepath1, filepath2) => {
   const keysOfFile2 = Object.keys(file2);
 
   const unionFiles = _.sortBy(_.union(keysOfFile1, keysOfFile2));
+  diff(unionFiles);
+  
+  const symbols = {
+    unchanged: '   ',
+    changed: ' - ',
+    added: ' + ',
+  }
+  const genDiff = diff.map((node) => {
+    const { key, type, value, oldValue } = node;
+    switch(type) {
+      case 'unchanged':
+        return `${symbols.unchanged}${key}: ${value}`;
+      case 'changed':
+        return `${symbols.added}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
+      case 'added':
+        return `${symbols.added}${key}: ${value}`;
+      case 'removed':
+        return `${symbols.changed}${key}: ${oldValue}`;
+    }
+  })
+  return `{\n${genDiff.join('\n')}\n}`;
+}
 
-  const diff = unionFiles.map((key) => {
+
+const diff = (unionFiles) => {
+  const mapDiff = unionFiles.map((key) => {
+    if (typeof unionFiles[key] === 'object') {
+      const obj = Object.keys(key);
+      return `${key}: ${dif(obj)}`
+    }
     if (!Object.hasOwn(file1, key)) {
       return {
         key: key,
@@ -41,25 +69,7 @@ export const engineDiff = (filepath1, filepath2) => {
       }
     }
   });
-  const symbols = {
-    unchanged: '   ',
-    changed: ' - ',
-    added: ' + ',
-  }
-  const genDiff = diff.map((node) => {
-    const { key, type, value, oldValue } = node;
-    switch(type) {
-      case 'unchanged':
-        return `${symbols.unchanged}${key}: ${value}`;
-      case 'changed':
-        return `${symbols.added}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
-      case 'added':
-        return `${symbols.added}${key}: ${value}`;
-      case 'removed':
-        return `${symbols.changed}${key}: ${oldValue}`;
-    }
-  })
-  return `{\n${genDiff.join('\n')}\n}`;
+  return mapDiff;
 }
   
 
