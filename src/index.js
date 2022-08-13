@@ -1,23 +1,33 @@
 import _ from 'lodash';
-import parser from 'parser.js';
+import parser from '../src/parser.js';
 
 export const engineDiff = (filepath1, filepath2) => {
   const file1 = parser(filepath1);
   const file2 = parser(filepath2);
+  
 
   const keysOfFile1 = Object.keys(file1);
   const keysOfFile2 = Object.keys(file2);
-
+ 
   const unionFiles = _.sortBy(_.union(keysOfFile1, keysOfFile2));
-  diff(unionFiles);
+  const diffResult = diff(unionFiles, file1, file2);
+  // console.log(JSON.stringify(diffResult, null, ' '));
+  const genDiffResult = genDiff(diffResult);
   
-  const symbols = {
-    unchanged: '   ',
-    changed: ' - ',
-    added: ' + ',
-  }
-  const genDiff = diff.map((node) => {
+}
+  const genDiff = (diffResult) => {
+    // console.log(JSON.stringify(diffResult, null, ' '))
+    const engine = diffResult.map((node) => {      
     const { key, type, value, oldValue } = node;
+    // if (typeof node === 'object') {
+      // const obj = Object.keys(keyNode);
+      // return `${node}: ${genDiff(obj)}`
+     //  }
+    const symbols = {
+      unchanged: '   ',
+      changed: ' - ',
+      added: ' + ',
+    }
     switch(type) {
       case 'unchanged':
         return `${symbols.unchanged}${key}: ${value}`;
@@ -29,17 +39,21 @@ export const engineDiff = (filepath1, filepath2) => {
         return `${symbols.changed}${key}: ${oldValue}`;
     }
   })
+  // console.log(JSON.stringify(engine, null, ' '));
   return `{\n${genDiff.join('\n')}\n}`;
 }
 
 
-const diff = (unionFiles) => {
+const diff = (unionFiles, file1, file2) => {
   const mapDiff = unionFiles.map((key) => {
-    if (typeof unionFiles[key] === 'object') {
-      const obj = Object.keys(key);
-      return `${key}: ${dif(obj)}`
+    if (typeof file1[key] === 'object' || typeof file2[key] === 'object') {
+      const obj = Object.keys(file1[key]);
+      return `${key}: ${diff(obj, file1, file2)}`
     }
     if (!Object.hasOwn(file1, key)) {
+      console.log('file1', file1)
+      console.log('key', key)
+      console.log(Object.hasOwn(file1, key))
       return {
         key: key,
         type: 'added',
@@ -69,6 +83,7 @@ const diff = (unionFiles) => {
       }
     }
   });
+  // console.log(JSON.stringify(mapDiff, null, ' '))
   return mapDiff;
 }
   

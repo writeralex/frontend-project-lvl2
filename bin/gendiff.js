@@ -10,7 +10,8 @@ program
   .option('-f, --format <type>', 'output format', 'stylish')
   .arguments('<filepath1> <filepath2>')
   .action((filepath1, filepath2) => {
-    return console.log(engineDiff(filepath1, filepath2));
+    // return console.log(JSON.stringify(engineDiff(filepath1, filepath2), null, ' '));
+    engineDiff(filepath1, filepath2);
   });
 program.parse();
 
