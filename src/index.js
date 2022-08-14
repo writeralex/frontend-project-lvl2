@@ -1,90 +1,94 @@
 import _ from 'lodash';
 import parser from '../src/parser.js';
+import path from 'path';
+import fs from 'fs';
+
+const getFullPath = (filepath) => path.resolve(process.cwd(), '__fixtures__', filepath);
+
+const parseData = (filepath) => {
+  const fullPath = getFullPath(filepath);
+  const contentPath = fs.readFileSync(fullPath, 'utf-8');
+  const ext = path.extname(fullPath);
+  return parser(contentPath, ext);
+}
 
 export const engineDiff = (filepath1, filepath2) => {
-  const file1 = parser(filepath1);
-  const file2 = parser(filepath2);
-  
-
-  const keysOfFile1 = Object.keys(file1);
-  const keysOfFile2 = Object.keys(file2);
- 
-  const unionFiles = _.sortBy(_.union(keysOfFile1, keysOfFile2));
-  const diffResult = diff(unionFiles, file1, file2);
-  // console.log(JSON.stringify(diffResult, null, ' '));
-  const genDiffResult = genDiff(diffResult);
-  
-}
-  const genDiff = (diffResult) => {
-    // console.log(JSON.stringify(diffResult, null, ' '))
-    const engine = diffResult.map((node) => {      
-    const { key, type, value, oldValue } = node;
-    // if (typeof node === 'object') {
-      // const obj = Object.keys(keyNode);
-      // return `${node}: ${genDiff(obj)}`
-     //  }
-    const symbols = {
-      unchanged: '   ',
-      changed: ' - ',
-      added: ' + ',
+  const paths = [filepath1, filepath2];
+  const data = paths.map(parseData);
+  const [obj1, obj2] = data;
+  const unionKeys = _.sortBy(_.union(Object.keys(obj1), Object.keys(obj2)));
+  const mapKeys = (obj1, obj2) => unionKeys.map((key) => {
+    const [value1, value2] = [obj1[key], obj2[key]];
+    if (typeof value1 === 'object' || typeof value2 === 'object') {
+      return {
+        key,
+        type: 'nested',
+        children: mapKeys(value1, value2)
+      }
     }
-    switch(type) {
-      case 'unchanged':
-        return `${symbols.unchanged}${key}: ${value}`;
-      case 'changed':
-        return `${symbols.added}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
-      case 'added':
-        return `${symbols.added}${key}: ${value}`;
-      case 'removed':
-        return `${symbols.changed}${key}: ${oldValue}`;
-    }
-  })
-  // console.log(JSON.stringify(engine, null, ' '));
-  return `{\n${genDiff.join('\n')}\n}`;
-}
-
-
-const diff = (unionFiles, file1, file2) => {
-  const mapDiff = unionFiles.map((key) => {
-    if (typeof file1[key] === 'object' || typeof file2[key] === 'object') {
-      const obj = Object.keys(file1[key]);
-      return `${key}: ${diff(obj, file1, file2)}`
-    }
-    if (!Object.hasOwn(file1, key)) {
-      console.log('file1', file1)
-      console.log('key', key)
-      console.log(Object.hasOwn(file1, key))
+    if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
       return {
         key: key,
         type: 'added',
-        value: file2[key],
+        value: value2,
       }
     }
-    if (!Object.hasOwn(file2, key)) {
+    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) {
       return {
         key: key,
         type: 'removed',
-        oldValue: file1[key],
+        oldValue: value1,
       }
     }
-    if (file1[key] === file2[key]) {
+    if (value1 === value2) {
       return {
         key: key,
         type: 'unchanged',
-        value: file1[key],
+        value: value1,
       }
     }
-    if (file1[key] !== file2[key]) {
+    if (value1 !== value2) {
       return {
         key: key,
         type: 'changed',
-        value: file2[key],
-        oldValue: file1[key],
+        value: value2,
+        oldValue: value1,
       }
     }
-  });
-  // console.log(JSON.stringify(mapDiff, null, ' '))
-  return mapDiff;
+  })
+  console.log(JSON.stringify(mapKeys(obj1, obj2), null, ' '))
 }
-  
 
+
+// BEFORE
+// const diffResult = mapKeys(obj1, obj2);
+// const genDiff = (diffResult) => diffResult.map((node) => {
+//   const {key, type, value, oldValue, }
+// })
+//   const genDiff = (diffResult) => {
+//     // console.log(JSON.stringify(diffResult, null, ' '))
+//     const engine = diffResult.map((node) => {      
+//     const { key, type, value, oldValue } = node;
+//     // if (typeof node === 'object') {
+//       // const obj = Object.keys(keyNode);
+//       // return `${node}: ${genDiff(obj)}`
+//      //  }
+//     const symbols = {
+//       unchanged: '   ',
+//       changed: ' - ',
+//       added: ' + ',
+//     }
+//     switch(type) {
+//       case 'unchanged':
+//         return `${symbols.unchanged}${key}: ${value}`;
+//       case 'changed':
+//         return `${symbols.added}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
+//       case 'added':
+//         return `${symbols.added}${key}: ${value}`;
+//       case 'removed':
+//         return `${symbols.changed}${key}: ${oldValue}`;
+//     }
+//   })
+//   // console.log(JSON.stringify(engine, null, ' '));
+//   return `{\n${genDiff.join('\n')}\n}`;
+// }

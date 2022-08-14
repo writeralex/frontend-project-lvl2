@@ -1,12 +1,13 @@
-import fs from 'fs';
+
 import yaml from 'js-yaml';
 
-const parser = (filepath) => {
-    if (filepath.includes('ml')) {
-        return yaml.load(fs.readFileSync(`./__fixtures__/${filepath}`, 'utf-8'));
-      }
-    if (filepath.includes('js')) {
-        return JSON.parse(fs.readFileSync(`./__fixtures__/${filepath}`, 'utf-8'));
+const parser = (contentPath, ext) => {
+    switch (ext) {
+        case '.yml':
+        case '.yaml':
+            return yaml.load(contentPath);
+        case '.json':
+            return JSON.parse(contentPath);
     }
 }
 
