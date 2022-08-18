@@ -12,83 +12,60 @@ const parseData = (filepath) => {
   return parser(contentPath, ext);
 }
 
+const buildTree = (obj1, obj2) => {
+  const keys = [obj1, obj2].flatMap(Object.keys);
+  const unionKeys = _.sortBy(_.union(keys));
+  const nodes = unionKeys.map((key) => {
+    const [value1, value2] = [obj1[key], obj2[key]];
+    if (_.isPlainObject(value1) && _.isPlainObject(value2)) {
+      return {
+        key,
+        type: 'nested',
+        children: buildTree(value1, value2)
+      }
+    }
+    if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) return {key, type: 'added', value: value2}
+    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) return {key, type: 'removed', oldValue: value1}
+    if (value1 === value2) return {key, type: 'unchanged', value: value1}
+    return {key, type: 'changed', value: value2, oldValue: value1}
+  })
+  return nodes;
+}
+
+const stylish = (diff) => {
+  const symbols = {
+    unchanged: '   ',
+    changed: ' - ',
+    added: ' + ',
+  }
+  const iter = (node, depth = 1) => {
+  const {key, type, value, oldValue, children} = node;
+  const str = ' ';
+  switch(type) {
+    case 'nested':
+      const flatChildren = children.flatMap((child) => iter(child, depth + 1));
+      return `${str.repeat(depth)} ${key}: {\n${flatChildren.join('\n')}\n${str.repeat(depth)} }`  
+    case 'unchanged':
+      return `${symbols.unchanged}${key}: ${value}`;
+    case 'changed':
+      return `${symbols.changed}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
+    case 'added':
+      return `${symbols.added}${key}: ${value}`;
+    case 'removed':
+      return `${symbols.changed}${key}: ${oldValue}`;
+  }
+}
+const result = diff.map((node) => iter(node));
+return `{\n${result.join('\n')}\n}`
+}
+
 export const engineDiff = (filepath1, filepath2) => {
   const paths = [filepath1, filepath2];
   const data = paths.map(parseData);
   const [obj1, obj2] = data;
-  const unionKeys = _.sortBy(_.union(Object.keys(obj1), Object.keys(obj2)));
-  const mapKeys = (obj1, obj2) => unionKeys.map((key) => {
-    const [value1, value2] = [obj1[key], obj2[key]];
-    if (typeof value1 === 'object' || typeof value2 === 'object') {
-      return {
-        key,
-        type: 'nested',
-        children: mapKeys(value1, value2)
-      }
-    }
-    if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
-      return {
-        key: key,
-        type: 'added',
-        value: value2,
-      }
-    }
-    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) {
-      return {
-        key: key,
-        type: 'removed',
-        oldValue: value1,
-      }
-    }
-    if (value1 === value2) {
-      return {
-        key: key,
-        type: 'unchanged',
-        value: value1,
-      }
-    }
-    if (value1 !== value2) {
-      return {
-        key: key,
-        type: 'changed',
-        value: value2,
-        oldValue: value1,
-      }
-    }
-  })
-  console.log(JSON.stringify(mapKeys(obj1, obj2), null, ' '))
+  const diff = buildTree(obj1, obj2);
+  const result = stylish(diff);
+  return result;
 }
 
-
-// BEFORE
-// const diffResult = mapKeys(obj1, obj2);
-// const genDiff = (diffResult) => diffResult.map((node) => {
-//   const {key, type, value, oldValue, }
-// })
-//   const genDiff = (diffResult) => {
-//     // console.log(JSON.stringify(diffResult, null, ' '))
-//     const engine = diffResult.map((node) => {      
-//     const { key, type, value, oldValue } = node;
-//     // if (typeof node === 'object') {
-//       // const obj = Object.keys(keyNode);
-//       // return `${node}: ${genDiff(obj)}`
-//      //  }
-//     const symbols = {
-//       unchanged: '   ',
-//       changed: ' - ',
-//       added: ' + ',
-//     }
-//     switch(type) {
-//       case 'unchanged':
-//         return `${symbols.unchanged}${key}: ${value}`;
-//       case 'changed':
-//         return `${symbols.added}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
-//       case 'added':
-//         return `${symbols.added}${key}: ${value}`;
-//       case 'removed':
-//         return `${symbols.changed}${key}: ${oldValue}`;
-//     }
-//   })
-//   // console.log(JSON.stringify(engine, null, ' '));
-//   return `{\n${genDiff.join('\n')}\n}`;
-// }
+// console.log(JSON.stringify(stylish(diff), null, ' '))
