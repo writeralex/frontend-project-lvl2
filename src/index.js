@@ -2,6 +2,9 @@ import _ from 'lodash';
 import parser from '../src/parser.js';
 import path from 'path';
 import fs from 'fs';
+import { formatterResult } from './formatters/index.js';
+import { stylish } from './formatters/stylish.js';
+import { plain } from './formatters/plain.js';
 
 const getFullPath = (filepath) => path.resolve(process.cwd(), '__fixtures__', filepath);
 
@@ -24,48 +27,20 @@ const buildTree = (obj1, obj2) => {
         children: buildTree(value1, value2)
       }
     }
-    if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) return {key, type: 'added', value: value2}
-    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) return {key, type: 'removed', oldValue: value1}
-    if (value1 === value2) return {key, type: 'unchanged', value: value1}
-    return {key, type: 'changed', value: value2, oldValue: value1}
+    if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) { return { key, type: 'added', value: value2 } };
+    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) { return { key, type: 'removed', value: value1 } };
+    if (value1 === value2) { return { key, type: 'unchanged', value: value1 } };
+    return { key, type: 'changed', value: value2, oldValue: value1 }
   })
   return nodes;
 }
 
-const stylish = (diff) => {
-  const symbols = {
-    unchanged: '   ',
-    changed: ' - ',
-    added: ' + ',
-  }
-  const iter = (node, depth = 1) => {
-  const {key, type, value, oldValue, children} = node;
-  const str = ' ';
-  switch(type) {
-    case 'nested':
-      const flatChildren = children.flatMap((child) => iter(child, depth + 1));
-      return `${str.repeat(depth)} ${key}: {\n${flatChildren.join('\n')}\n${str.repeat(depth)} }`  
-    case 'unchanged':
-      return `${symbols.unchanged}${key}: ${value}`;
-    case 'changed':
-      return `${symbols.changed}${key}: ${oldValue}\n${symbols.added}${key}: ${value}`;
-    case 'added':
-      return `${symbols.added}${key}: ${value}`;
-    case 'removed':
-      return `${symbols.changed}${key}: ${oldValue}`;
-  }
-}
-const result = diff.map((node) => iter(node));
-return `{\n${result.join('\n')}\n}`
-}
-
-export const engineDiff = (filepath1, filepath2) => {
+export const engineDiff = (filepath1, filepath2, formatName = 'stylish') => {
   const paths = [filepath1, filepath2];
   const data = paths.map(parseData);
   const [obj1, obj2] = data;
   const diff = buildTree(obj1, obj2);
-  const result = stylish(diff);
+  const result = plain(diff)
+  // const result = formatterResult(diff, formatName);
   return result;
 }
-
-// console.log(JSON.stringify(stylish(diff), null, ' '))
