@@ -15,3 +15,6 @@ jobs:
       - name: Run jest
         run: 
           make test
+      - name: Test and publish code coverage
+        env:
+        CC_TEST_REPORTER_ID: ${{ secrets.TEST_COVERAGE }}
