@@ -1,8 +1,10 @@
-name: test1
+name: main test
 on: push
 jobs: 
   my-job:
     runs-on: ubuntu-latest
     steps:
-      - name: my-step
-      - run: node ./__tests__/index.test.js
+      - name: index test
+      - run: make test-coverage
+      - name: linter
+      - run: make lint

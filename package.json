@@ -21,16 +21,20 @@
   },
   "homepage": "https://github.com/writeralex/frontend-project-lvl2#readme",
   "dependencies": {
-    "@hexlet/immutable-fs-trees": "^0.7.1",
-    "commander": "^9.4.0",
+    "@jest/globals": "^29.0.2",
+    "commander": "^9.1.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@jest/globals": "^28.0.3",
-    "eslint": "^8.21.0",
-    "jest": "^28.1.3",
-    "jest-cli": "^28.0.3",
-    "nodemon": "^2.0.19"
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.5.1",
+    "jest-circus": "^28.1.2",
+    "jest-cli": "^28.1.2"
   }
 }
