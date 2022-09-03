@@ -3,8 +3,6 @@ import parser from '../src/parser.js';
 import path from 'path';
 import fs from 'fs';
 import { formatterResult } from './formatters/index.js';
-import { stylish } from './formatters/stylish.js';
-import { plain } from './formatters/plain.js';
 
 const getFullPath = (filepath) => path.resolve(process.cwd(), '__fixtures__', filepath);
 
@@ -40,7 +38,6 @@ export const engineDiff = (filepath1, filepath2, formatName = 'stylish') => {
   const data = paths.map(parseData);
   const [obj1, obj2] = data;
   const diff = buildTree(obj1, obj2);
-  const result = plain(diff)
-  // const result = formatterResult(diff, formatName);
+  const result = formatterResult(diff, formatName);
   return result;
 }
