@@ -1,11 +1,14 @@
 name: main test
-on: push
+on: 
+  - push
+
 jobs: 
-  my-job:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Node.js 
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: '16.x'
@@ -16,5 +19,9 @@ jobs:
         run: 
           make test
       - name: Test and publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
         env:
         CC_TEST_REPORTER_ID: ${{ secrets.TEST_COVERAGE }}
+        with:
+          coverageCommand: make test-coverage
+          debug: true
