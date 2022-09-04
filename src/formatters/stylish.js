@@ -6,8 +6,8 @@ const isObject = (value, depth = 1) => {
   }
   const valueKeys = Object.keys(value);
   const str = '  ';
-  const mapKeys = valueKeys.map((key) => `${str.repeat(depth + 3)}${key}: ${isObject(value[key], depth)}`);
-  return `{\n${mapKeys.join('\n')}\n${str.repeat(depth + 1)}}`;
+  const mapKeys = valueKeys.map((key) => `${str.repeat((depth + 1) * 4 - 2)}${key}: ${isObject(value[key], depth + 1)}`);
+  return `{\n${mapKeys.join('\n')}\n${str.repeat(depth * 4 - 2)}}`;
 };
 
 const stylish = (diff) => {
@@ -20,16 +20,16 @@ const stylish = (diff) => {
     const {
       key, type, value, oldValue, children,
     } = node;
-    const str = '  ';
+    const str = ' ';
     switch (type) {
       case 'unchanged':
       case 'added':
       case 'removed':
-        return `${str.repeat(depth)}${symbols[type]} ${key}: ${isObject(value, depth)}`;
+        return `${str.repeat(depth * 4 - 2)}${symbols[type]} ${key}: ${isObject(value, depth)}`;
       case 'changed':
-        return `${str.repeat(depth)}${symbols.removed} ${key}: ${isObject(oldValue, depth)}\n${str.repeat(depth)}${symbols.added} ${key}: ${isObject(value, depth)}`;
+        return `${str.repeat(depth * 4 - 2)}${symbols.removed} ${key}: ${isObject(oldValue, depth)}\n${str.repeat(depth * 4 - 2)}${symbols.added} ${key}: ${isObject(value, depth)}`;
       case 'nested':
-        return `${str.repeat(depth)}${key}: {\n${children.flatMap((child) => iter(child, depth + 1)).join('\n')}\n${str.repeat(depth)}}`;
+        return `${str.repeat(depth * 4 - 2)}${key}: {\n${children.flatMap((child) => iter(child, depth + 1)).join('\n')}\n${str.repeat(depth * 4 - 2)}}`;
       default:
         throw new Error(`Unknown type: ${type}`);
     }
