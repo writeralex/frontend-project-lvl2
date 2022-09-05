@@ -3,7 +3,9 @@ Asciinema step 3:
 Asciinema step 4:
 [![asciicast](https://asciinema.org/a/RCh5yM776B45SyWqWN5yli5g2.svg)](https://asciinema.org/a/RCh5yM776B45SyWqWN5yli5g2)
 Asciinema step 7:
-[![asciicast](https://asciinema.org/a/HnW76CNwbe0ge4eTIgSJ5sHHX.svg)](https://asciinema.org/a/HnW76CNwbe0ge4eTIgSJ5sHHX)
+[![asciicast](https://asciinema.org/a/PZAeTrg9sloBtK5qhQLm2yHVL.svg)](https://asciinema.org/a/PZAeTrg9sloBtK5qhQLm2yHVL)
+Asciinema step 7:
+[![asciicast](https://asciinema.org/a/NwmCyAbgkhTHspxQbmj984Edr.svg)](https://asciinema.org/a/NwmCyAbgkhTHspxQbmj984Edr)
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/writeralex/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/writeralex/frontend-project-lvl2/actions)
