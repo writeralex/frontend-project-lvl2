@@ -4,7 +4,7 @@ Asciinema step 4:
 [![asciicast](https://asciinema.org/a/RCh5yM776B45SyWqWN5yli5g2.svg)](https://asciinema.org/a/RCh5yM776B45SyWqWN5yli5g2)
 Asciinema step 7:
 [![asciicast](https://asciinema.org/a/PZAeTrg9sloBtK5qhQLm2yHVL.svg)](https://asciinema.org/a/PZAeTrg9sloBtK5qhQLm2yHVL)
-Asciinema step 7:
+Asciinema step 8:
 [![asciicast](https://asciinema.org/a/NwmCyAbgkhTHspxQbmj984Edr.svg)](https://asciinema.org/a/NwmCyAbgkhTHspxQbmj984Edr)
 
 ### Hexlet tests and linter status:
