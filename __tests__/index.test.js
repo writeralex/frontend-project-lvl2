@@ -29,3 +29,10 @@ test('plain yaml files', () => {
 
   expect(engineDiff(filepath1, filepath2, 'plain')).toBe(fs.readFileSync('./__fixtures__/plainResult.txt', 'utf-8'));
 });
+
+test('json files', () => {
+  const filepath1 = 'file1.yaml';
+  const filepath2 = 'file2.yaml';
+
+  expect(engineDiff(filepath1, filepath2, 'json')).toBe(fs.readFileSync('./__fixtures__/jsonResult.txt', 'utf-8'));
+});
