@@ -1,13 +1,17 @@
 import _ from 'lodash';
 
+const makeIndent = (depth) => {
+  const str = ' ';
+  return str.repeat(depth * 4 - 2);
+};
+
 const isObject = (value, depth = 1) => {
   if (!_.isObject(value)) {
     return value;
   }
   const valueKeys = Object.keys(value);
-  const str = '  ';
-  const mapKeys = valueKeys.map((key) => `${str.repeat((depth + 1) * 4 - 2)}${key}: ${isObject(value[key], depth + 1)}`);
-  return `{\n${mapKeys.join('\n')}\n${str.repeat(depth * 4 - 2)}}`;
+  const mapKeys = valueKeys.map((key) => `${makeIndent(depth + 1)}  ${key}: ${isObject(value[key], depth + 1)}`);
+  return `{\n${mapKeys.join('\n')}\n  ${makeIndent(depth)}}`;
 };
 
 const stylish = (diff) => {
@@ -20,16 +24,15 @@ const stylish = (diff) => {
     const {
       key, type, value, oldValue, children,
     } = node;
-    const str = ' ';
     switch (type) {
       case 'unchanged':
       case 'added':
       case 'removed':
-        return `${str.repeat(depth * 4 - 2)}${symbols[type]} ${key}: ${isObject(value, depth)}`;
+        return `${makeIndent(depth)}${symbols[type]} ${key}: ${isObject(value, depth)}`;
       case 'changed':
-        return `${str.repeat(depth * 4 - 2)}${symbols.removed} ${key}: ${isObject(oldValue, depth)}\n${str.repeat(depth * 4 - 2)}${symbols.added} ${key}: ${isObject(value, depth)}`;
+        return `${makeIndent(depth)}${symbols.removed} ${key}: ${isObject(oldValue, depth)}\n${makeIndent(depth)}${symbols.added} ${key}: ${isObject(value, depth)}`;
       case 'nested':
-        return `${str.repeat(depth * 4 - 2)}${key}: {\n${children.flatMap((child) => iter(child, depth + 1)).join('\n')}\n${str.repeat(depth * 4 - 2)}}`;
+        return `${makeIndent(depth)}  ${key}: {\n${children.flatMap((child) => iter(child, depth + 1)).join('\n')}\n${makeIndent(depth)}  }`;
       default:
         throw new Error(`Unknown type: ${type}`);
     }
