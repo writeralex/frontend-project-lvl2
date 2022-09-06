@@ -30,7 +30,7 @@ const plain = (diff) => {
         throw new Error(`Unknown type: ${type}`);
     }
   };
-  const result = diff.map((node) => iter(node));
+  const result = diff.flatMap((node) => iter(node));
   return `${result.join('\n')}`;
 };
 
