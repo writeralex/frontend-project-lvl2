@@ -19,6 +19,7 @@ Node.js версии 13 и выше.
 `gendiff [options] <filepath1> <filepath2>`
 
 Options:
+
 `-V, --version        output the version number`
 
 `-f, --format <type>  output format (default: "stylish")`
