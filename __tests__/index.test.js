@@ -12,8 +12,8 @@ const jsonResult = readFile('jsonResult.txt');
 
 const file1json = getFixturePath('file1.json');
 const file2json = getFixturePath('file2.json');
-const file1yaml = getFixturePath('file1.yml');
-const file2yaml = getFixturePath('file1.yml');
+const file1yaml = getFixturePath('file1.yaml');
+const file2yaml = getFixturePath('file2.yaml');
 
 test('stylish json files', () => {
   expect(engineDiff(file1json, file2json)).toEqual(stylishResult);
