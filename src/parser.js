@@ -8,7 +8,7 @@ const parser = (content, type) => {
     case 'json':
       return JSON.parse(content);
     default:
-      throw new Error(`Extension .${type} is not supported`);
+      throw new Error(`Format ${type} is not supported`);
   }
 };
 

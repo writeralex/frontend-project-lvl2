@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
 const stringify = (value) => {
-  if (_.stringify(value)) {
+  if (_.isObject(value)) {
     return '[complex value]';
   }
-  if (_.stringify(value)) {
+  if (!_.isObject(value)) {
     return `'${value}'`;
   }
   return value;
