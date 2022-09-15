@@ -1,14 +1,14 @@
 import yaml from 'js-yaml';
 
-const parser = (contentPath, ext) => {
-  switch (ext) {
-    case '.yml':
-    case '.yaml':
-      return yaml.load(contentPath);
-    case '.json':
-      return JSON.parse(contentPath);
+const parser = (content, type) => {
+  switch (type) {
+    case 'yml':
+    case 'yaml':
+      return yaml.load(content);
+    case 'json':
+      return JSON.parse(content);
     default:
-      throw new Error(`Extension ${ext} is not supported`);
+      throw new Error(`Extension .${type} is not supported`);
   }
 };
 

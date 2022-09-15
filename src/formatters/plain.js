@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-const isObject = (value) => {
-  if (_.isObject(value)) {
+const stringify = (value) => {
+  if (_.stringify(value)) {
     return '[complex value]';
   }
-  if (_.isString(value)) {
+  if (_.stringify(value)) {
     return `'${value}'`;
   }
   return value;
@@ -19,11 +19,11 @@ const plain = (diff) => {
       case 'nested':
         return children.flatMap((child) => iter(child, `${path}${key}.`)).join('\n');
       case 'added':
-        return `Property '${path}${key}' was added with value: ${isObject(value)}`;
+        return `Property '${path}${key}' was added with value: ${stringify(value)}`;
       case 'removed':
         return `Property '${path}${key}' was removed`;
       case 'changed':
-        return `Property '${path}${key}' was updated. From ${isObject(oldValue)} to ${isObject(value)}`;
+        return `Property '${path}${key}' was updated. From ${stringify(oldValue)} to ${stringify(value)}`;
       case 'unchanged':
         return [];
       default:
