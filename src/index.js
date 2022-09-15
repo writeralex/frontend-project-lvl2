@@ -9,7 +9,7 @@ const getFullPath = (filepath) => path.resolve(process.cwd(), '__fixtures__', fi
 const parseData = (filepath) => {
   const fullPath = getFullPath(filepath);
   const content = fs.readFileSync(fullPath, 'utf-8');
-  const type = fullPath.split('.').pop();
+  const type = fullPath.split('.')[1];
   return parser(content, type);
 };
 
