@@ -30,7 +30,10 @@ const stylish = (diff) => {
       case 'removed':
         return `${makeIndent(depth)}${symbols[type]} ${key}: ${stringify(value, depth)}`;
       case 'changed':
-        return `${makeIndent(depth)}${symbols.removed} ${key}: ${stringify(oldValue, depth)}\n${makeIndent(depth)}${symbols.added} ${key}: ${stringify(value, depth)}`;
+        return [
+          `${makeIndent(depth)}${symbols.removed} ${key}: ${stringify(oldValue, depth)}`,
+          `${makeIndent(depth)}${symbols.added} ${key}: ${stringify(value, depth)}`,
+        ];
       case 'nested':
         return `${makeIndent(depth)}  ${key}: {\n${children.flatMap((child) => iter(child, depth + 1)).join('\n')}\n${makeIndent(depth)}  }`;
       default:
