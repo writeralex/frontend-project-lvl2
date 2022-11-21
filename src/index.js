@@ -4,7 +4,7 @@ import parser from './parser.js';
 import formatterResult from './formatters/index.js';
 import buildTree from './buildTree.js';
 
-const getFullPath = (filepath) => path.resolve(process.cwd(), filepath);
+const getFullPath = (filepath) => path.resolve(process.cwd(), '__fixtures__', filepath);
 
 const parseData = (filepath) => {
   const fullPath = getFullPath(filepath);
