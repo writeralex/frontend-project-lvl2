@@ -9,11 +9,11 @@ const getFullPath = (filepath) => path.resolve(process.cwd(), filepath);
 const parseData = (filepath) => {
   const fullPath = getFullPath(filepath);
   const content = fs.readFileSync(fullPath, 'utf-8');
-  const type = path.extname(fullPath);
+  const type = path.extname(fullPath).substring(1);
   return parser(content, type);
 };
 
-const engineDiff = (filepath1, filepath2, formatName = 'stylish') => {
+const genDiff = (filepath1, filepath2, formatName = 'stylish') => {
   const paths = [filepath1, filepath2];
   const data = paths.map(parseData);
   const [data1, data2] = data;
@@ -22,4 +22,4 @@ const engineDiff = (filepath1, filepath2, formatName = 'stylish') => {
   return result;
 };
 
-export default engineDiff;
+export default genDiff;

@@ -22,17 +22,17 @@ const stylish = (diff) => {
   };
   const iter = (node, depth = 1) => {
     const {
-      key, type, value, oldValue, children,
+      key, type, value1, value2, children,
     } = node;
     switch (type) {
       case 'unchanged':
       case 'added':
       case 'removed':
-        return `${makeIndent(depth)}${symbols[type]} ${key}: ${stringify(value, depth)}`;
+        return `${makeIndent(depth)}${symbols[type]} ${key}: ${stringify(value1, depth)}`;
       case 'changed':
         return [
-          `${makeIndent(depth)}${symbols.removed} ${key}: ${stringify(oldValue, depth)}`,
-          `${makeIndent(depth)}${symbols.added} ${key}: ${stringify(value, depth)}`,
+          `${makeIndent(depth)}${symbols.removed} ${key}: ${stringify(value2, depth)}`,
+          `${makeIndent(depth)}${symbols.added} ${key}: ${stringify(value1, depth)}`,
         ];
       case 'nested':
         return `${makeIndent(depth)}  ${key}: {\n${children.flatMap((child) => iter(child, depth + 1)).join('\n')}\n${makeIndent(depth)}  }`;
